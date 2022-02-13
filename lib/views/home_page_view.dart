@@ -29,7 +29,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: buildDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
           Navigator.push(context, MaterialPageRoute(builder: (context) => AddTodo()));
@@ -37,42 +36,15 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.add),
       ),
       appBar: AppBar(
+        actions: [
+          IconButton(onPressed: (){
+            Auth().logOut();
+          }, icon: Icon(Icons.logout)),
+        ],
         title: Text('HomePage'),
         centerTitle: true,
       ),
       body: Body(),
-    );
-  }
-
-  Drawer buildDrawer() {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-           DrawerHeader(
-            decoration: const BoxDecoration(
-              color: Colors.blue,
-            ),
-            child: Text(model.email.toString()),
-          ),
-          ListTile(
-            title: const Text('Home Page'),
-            onTap: () {
-            },
-          ),
-          ListTile(
-            title: const Text('Profile'),
-            onTap: () {
-            },
-          ),
-          ListTile(
-            title: const Text('Sign Out',),
-            onTap: () {
-              Auth().logOut();
-            },
-          ),
-        ],
-      ),
     );
   }
 }

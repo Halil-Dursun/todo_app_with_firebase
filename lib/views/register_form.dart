@@ -1,7 +1,9 @@
+import 'package:firebase_todo_app/controller/register_form_controller.dart';
 import 'package:firebase_todo_app/models/user_model.dart';
 import 'package:firebase_todo_app/service/auth_service.dart';
 import 'package:firebase_todo_app/service/firestore_service.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class RegisterForm extends StatefulWidget {
   @override
@@ -12,6 +14,8 @@ class _RegisterFormState extends State<RegisterForm> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   UserModel userModel = UserModel(username: '', email: '', password: '');
   bool loginOrRegister = false;
+  final RegisterFormController _registerFormController =
+      Get.put(RegisterFormController());
 
   @override
   Widget build(BuildContext context) {
@@ -22,14 +26,14 @@ class _RegisterFormState extends State<RegisterForm> {
       child: Container(
         width: _width,
         height: _height,
-        child: ListView(
+        child: Obx(()=>ListView(
           children: [
             Container(
               margin: const EdgeInsets.symmetric(vertical: 20),
               height: _height / 5,
               child: Image.asset('images/todo.jpg'),
             ),
-            if (!loginOrRegister)
+            if (!_registerFormController.loginOrRegister.value)
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
@@ -83,6 +87,7 @@ class _RegisterFormState extends State<RegisterForm> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
+                obscureText: _registerFormController.obscureText.value,
                 onChanged: (value) {
                   userModel.password = value;
                 },
@@ -94,6 +99,15 @@ class _RegisterFormState extends State<RegisterForm> {
                   }
                 },
                 decoration: InputDecoration(
+                  suffixIcon: _registerFormController.obscureText.value
+                      ? IconButton(
+                      onPressed: () {
+                        _registerFormController.changeObscureText();
+                      }, icon: Icon(Icons.visibility_off))
+                      : IconButton(
+                      onPressed: () {
+                        _registerFormController.changeObscureText();
+                      }, icon: Icon(Icons.visibility)),
                   labelText: 'Password',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -104,59 +118,55 @@ class _RegisterFormState extends State<RegisterForm> {
                 ),
               ),
             ),
-            loginOrRegister
+            _registerFormController.loginOrRegister.value
                 ? Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        login();
-                      },
-                      child: Text('Giriş Yap'),
-                      style: ElevatedButton.styleFrom(primary: Colors.blue),
-                    ),
-                  )
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  login();
+                },
+                child: Text('Giriş Yap'),
+                style: ElevatedButton.styleFrom(primary: Colors.blue),
+              ),
+            )
                 : Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        register();
-                      },
-                      child: Text('Kayıt Ol'),
-                      style: ElevatedButton.styleFrom(primary: Colors.blue),
-                    ),
-                  ),
-            loginOrRegister
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  register();
+                },
+                child: Text('Kayıt Ol'),
+                style: ElevatedButton.styleFrom(primary: Colors.blue),
+              ),
+            ),
+            _registerFormController.loginOrRegister.value
                 ? TextButton(
-                    onPressed: () {
-                      setState(() {
-                        loginOrRegister = !loginOrRegister;
-                      });
-                    },
-                    child: Text('Bir hesabım yok...'))
+                onPressed: () {
+                  _registerFormController.changeLoginOrRegister();
+                },
+                child: Text('Bir hesabım yok...'))
                 : TextButton(
-                    onPressed: () {
-                      setState(() {
-                        loginOrRegister = !loginOrRegister;
-                      });
-                    },
-                    child: Text('Zaten hesabım var...'),
-                  ),
+              onPressed: () {
+                _registerFormController.changeLoginOrRegister();
+              },
+              child: Text('Zaten hesabım var...'),
+            ),
           ],
-        ),
+        ),),
       ),
     );
   }
 
   void login() {
-    if(_key.currentState!.validate()){
+    if (_key.currentState!.validate()) {
       Auth().login(userModel);
     }
   }
 
-  void register() async{
-    if(_key.currentState!.validate()){
+  void register() async {
+    if (_key.currentState!.validate()) {
       String uid = await Auth().register(userModel);
-      if(uid != null && uid.length>0){
+      if (uid != null && uid.length > 0) {
         FireStore().addUser(userModel, uid);
       }
     }
