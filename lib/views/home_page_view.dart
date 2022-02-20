@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_todo_app/models/user_model.dart';
 import 'package:firebase_todo_app/service/auth_service.dart';
 import 'package:firebase_todo_app/service/firestore_service.dart';
@@ -77,10 +76,11 @@ class Body extends StatelessWidget {
               var addTodoDate = (data['date_time_now'] as Timestamp).toDate();
               return Container(
                 child: Card(
-                  shape: const RoundedRectangleBorder(
-                    side: BorderSide(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    side: const BorderSide(
                       color: Colors.black54,
-                      width: 2.0
+                      width: 1.0
                     )
                   ),
                   child: ListTile(
@@ -88,16 +88,27 @@ class Body extends StatelessWidget {
                       _fireStore.deleteTodo(documentSnapshot.reference);
                     }, icon: Icon(Icons.delete)),
                     title: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(data['todo'],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.blueGrey),),
+                      padding: const EdgeInsets.only(left: 8.0,right: 8.0,top: 8.0),
+                      child: Text(data['todo'],style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Görev Tarihi : ' + DateFormat('d MMM yyyy, EEEE').format(todoDate).toString(),style: TextStyle(fontSize: 14,color: Colors.black),),
-                          Text('Görevin Eklenme Tarihi : '+DateFormat('d MMM yyyy, EEEE').format(addTodoDate).toString(),style: TextStyle(fontSize: 14,color: Colors.black),)
+                          Row(
+                            children: [
+                              const Text('Görev Tarihi : ',style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.bold)),
+                              Text(DateFormat('d MMM yyyy, EEEE').format(todoDate).toString(),style: const TextStyle(color: Colors.blueGrey,fontSize: 12),),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const Text('Görev Eklenme Tarihi : ',style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.bold),),
+                              Text(DateFormat('d MMM yyyy, EEEE').format(addTodoDate).toString(),style: const TextStyle(color: Colors.blueGrey,fontSize: 13),),
+                            ],
+                          )
+
                         ],
                       ),
                     ),

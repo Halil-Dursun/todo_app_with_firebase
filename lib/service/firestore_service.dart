@@ -5,6 +5,8 @@ import 'package:firebase_todo_app/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../src/toast_message.dart';
+
 class FireStore {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
@@ -40,24 +42,12 @@ class FireStore {
       'email': model.email,
       'username': model.username,
     }).then((value) {
-      Fluttertoast.showToast(
-          msg: "Bilgileriniz Güncellendi",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      ToastMessage.shortMessage(msg: 'Bilgileriniz güncellendi', color: Colors.green);
+
     }).catchError((e) {
       debugPrint(e);
-      Fluttertoast.showToast(
-          msg: "Bilgileriniz Güncellenemedi.Bir hata oluştu.",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      ToastMessage.shortMessage(msg: 'Bilgileriniz güncellenirken bir hata oluştu', color: Colors.green);
+
     });
   }
 
@@ -71,47 +61,21 @@ class FireStore {
       'todo_time': todoModel.dateTimeTodo,
       'date_time_now': todoModel.dateTimeNow,
     }).then((value) {
-      Fluttertoast.showToast(
-          msg: "Todo Eklendi",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      ToastMessage.shortMessage(msg: 'Görev eklendi', color: Colors.green);
     }).catchError((e) {
       debugPrint(e);
-      Fluttertoast.showToast(
-          msg: "Kayıt başarısız",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      ToastMessage.shortMessage(msg: 'Görev eklenirken hata oluştu', color: Colors.red);
+
     });
   }
 
   Future<void> deleteTodo(DocumentReference reference) async {
     await reference.delete().then((value) {
-      Fluttertoast.showToast(
-          msg: "Todo silindi",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      ToastMessage.shortMessage(msg: 'Görev silindi', color: Colors.green);
+
     }).catchError((e) {
       debugPrint(e);
-      Fluttertoast.showToast(
-          msg: "Todo silme işlemi başarısız",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      ToastMessage.shortMessage(msg: 'Görev silme işlemi başarısız', color: Colors.red);
     });
   }
 }
